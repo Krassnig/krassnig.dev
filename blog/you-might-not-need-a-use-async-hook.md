@@ -1,4 +1,4 @@
-# You Might Not Need useEffectAsync
+# You Might Not Need A useEffectAsync Hook
 
 **Or alternatively "How to use async functions in React".**
 
