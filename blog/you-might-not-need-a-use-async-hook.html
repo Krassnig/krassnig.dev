@@ -22,8 +22,9 @@
 			<span class="spacer"></span>
 			<article>
 
-                
-<h3 id="or-alternatively-how-to-use-async-functions-in-react-">Or alternatively &quot;How to use async functions in React&quot;.</h3>
+
+<h1 id="you-might-not-need-a-useeffectasync-hook">You Might Not Need A useEffectAsync Hook</h1>
+<h3 id="or-alternatively-how-to-use-async-functions-in-react">Or Alternatively: How To Use Async Functions In React</h3>
 <p>There is numerous attempts at handling async programming in React.
 Many of those attempts introduce a new hook that is named some version of <code>useAsync</code>,
 but creating a custom hook with dependencies has one big downside.
@@ -73,8 +74,8 @@ If you know how to implement a timer with <code>useEffect</code> already, you ca
 }
 </code></pre>
 <p>You can find more on <code>Effect</code> in the <a href="#effect">Effect Section</a> of this article.</p>
-<h2 id="back-to-async">Back to Async</h2>
-<h3 id="why-the-extra-in-front-of-async-">Why the extra <code>() =&gt;</code> in front of <code>Async</code></h3>
+<h2 id="back-to-async">Back To Async</h2>
+<h3 id="why-the-extra-in-front-of-async-">Why The Extra <code>() =&gt;</code> In Front Of <code>Async</code></h3>
 <pre><code class="lang-typescript"><span class="hljs-comment">// DO NOT do this, theoretically possible</span>
 useEffect(Async(async signal =&gt; <span class="hljs-comment">{
 
@@ -195,7 +196,7 @@ This boilerplate is what <code>Async</code> allows you to abstracts.</p>
 </code></pre>
 <p>By using <code>Async</code> in the <code>Timer</code> component we only see the async code we care about,
 which is the for loop which updates the seconds that have passed.</p>
-<h3 id="how-to-implement-abortable-promises">How to implement abortable Promises</h3>
+<h3 id="how-to-implement-abortable-promises">How To Implement Abortable Promises</h3>
 <p>Inside promises we need to use the <code>AbortSignal</code> to properly abort promises.
 When <code>controller.abort(reason: any)</code> is called the associated <code>controller.signal</code> is aborted
 and the <code>reason</code> provided should (ideally) be thrown from the inside async function.</p>
@@ -238,7 +239,7 @@ The example below is implemented by subscribing to the <code>&#39;abort&#39;</co
 }
 </code></pre>
 <p>As you have already seen in the <a href="#converting-to-effect">Introduction</a> of this article there is an easier way of implementing this function using the <code>Effect</code> function instead.</p>
-<h3 id="support-for-abortsignal">Support for AbortSignal</h3>
+<h3 id="support-for-abortsignal">Support For AbortSignal</h3>
 <p>Abort Signals are supported by both
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Request/signal">fetch</a>
 and
@@ -248,7 +249,7 @@ Since
 is not async it does not support <code>AbortSignal</code>s but it has an <code>abort</code> method to achieve the same effect.</p>
 <p>Sadly, both <code>fetch</code> and <code>axios</code> throw custom errors when cancelling http requests.
 However, there is a work-around.</p>
-<h3 id="how-to-handle-errors-with-abortsignal">How to handle errors with AbortSignal</h3>
+<h3 id="how-to-handle-errors-with-abortsignal">How To Handle Errors With AbortSignal</h3>
 <p>Cancellation errors thrown inside async function should not be caught in general.
 Instead, they should be rethrown until they reach the orignal caller of the async function.</p>
 <p>However, checking for a specific error is difficult if you neither have controll over the error thrown by the callee nor the error provided by the caller.
@@ -269,7 +270,7 @@ Through this you can infer that the error is <em>almost</em> centrainly a cancel
     }
 }
 </code></pre>
-<h2 id="reacts-documentation-for-fechting-data">Reacts Documentation for Fechting Data</h2>
+<h2 id="reacts-documentation-for-fechting-data">Reacts Documentation For Fechting Data</h2>
 <p>The React documentation on
 <a href="https://react.dev/learn/you-might-not-need-an-effect">You Might Not Need an Effect</a> 
 contains a section on how to handle asynchronous calls inside the
@@ -389,7 +390,7 @@ feel free to express that uncertainty by switching between both paradigms multip
     )
 );
 </code></pre>
-<h2 id="comment-star">Comment &amp; Star</h2>
+<h2 id="contribute">Contribute</h2>
 <p>To leave a comment please use the
 <a href="https://github.com/Krassnig/krassnig.dev/issues/1">krassnig.dev repository issue</a>.
 If you like this library I would really appreciate a github star in the
