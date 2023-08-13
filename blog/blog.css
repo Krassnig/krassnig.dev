@@ -86,28 +86,28 @@ header {
 
 header a {
 	font-family: 'Times New Roman', Times, serif;
-	font-weight: lighter;
 	color: white;
 	padding: 30px;
 	font-size: 1.5rem;
 }
 
-main {
-	flex-direction: row;
-}
+@media screen and (max-width: 500px) {
+	header {
+		justify-content: center;
+	}
 
-.spacer {
-	flex: 0 1 0;
-}
-
-@media screen and (min-width: 800px) {
-	.spacer {
-		flex: 1 1 0;
+	header a {
+		padding: 15px;
 	}
 }
 
+main {
+	flex-direction: row;
+	justify-content: center;
+}
+
 article {
-	flex: 98 1 0;
+	flex: 1 1 0;
 	min-width: 0;
 	flex-direction: column;
 	padding: 10px;

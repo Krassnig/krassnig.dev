@@ -20,7 +20,6 @@
         </header>
         <h1 id="you-might-not-need-a-useeffectasync-hook">You Might Not Need A useEffectAsync Hook</h1>
 		<main>
-			<span class="spacer"></span>
 			<article>
 
 
@@ -33,7 +32,7 @@ The depency array is no longer statically verifiable by eslint.</p>
 <p>The source code for the library used in this article can be found in this
 <a href="https://github.com/Krassnig/no-async-hook">Github repository</a> and
 <a href="https://www.npmjs.com/package/no-async-hook">NPM package</a>.</p>
-<h2 id="converting-to-async">Converting To Async</h2>
+<h2 id="converting-to-async">Async</h2>
 <p>The <code>Async</code> function allows you to write a normal async function and converts that async function into a function that <code>useEffect</code> can control.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Async } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 <span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
@@ -61,7 +60,7 @@ eslint verifies missing dependencies like it would for any other function inside
 For example, if the <code>personId</code> were to be forgotten inside the <code>useEffect</code> dependency array,
 eslint would warn you with the message:
 <code>React Hook useEffect has a missing dependency: &#39;personId&#39;. Either include it or remove the dependency array  react-hooks/exhaustive-deps</code>.</p>
-<h2 id="converting-to-effect">Converting To Effect</h2>
+<h2 id="converting-to-effect">Effect</h2>
 <p>The inverse function of <code>Async</code> is <code>Effect</code> and is used to convert callback style functions into promises.
 If you know how to implement a timer with <code>useEffect</code> already, you can easily implement an async/await implementation through the <code>Effect</code> function.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Effect } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
@@ -399,7 +398,6 @@ If you like this library I would really appreciate a github star in the
 
 
 			</article>
-			<span class="spacer"></span>
 		</main>
 	</body>
 </html>

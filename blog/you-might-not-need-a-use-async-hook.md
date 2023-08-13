@@ -13,7 +13,7 @@ The source code for the library used in this article can be found in this
 [Github repository](https://github.com/Krassnig/no-async-hook) and
 [NPM package](https://www.npmjs.com/package/no-async-hook).
 
-## Converting To Async
+## Async
 
 The `Async` function allows you to write a normal async function and converts that async function into a function that `useEffect` can control.
 
@@ -46,7 +46,7 @@ For example, if the `personId` were to be forgotten inside the `useEffect` depen
 eslint would warn you with the message:
 `React Hook useEffect has a missing dependency: 'personId'. Either include it or remove the dependency array  react-hooks/exhaustive-deps`.
 
-## Converting To Effect
+## Effect
 
 The inverse function of `Async` is `Effect` and is used to convert callback style functions into promises.
 If you know how to implement a timer with `useEffect` already, you can easily implement an async/await implementation through the `Effect` function.
