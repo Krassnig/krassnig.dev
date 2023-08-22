@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>You Might Not Need A useEffectAsync Hook</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="prism.css">
+        <script src="prism.js" defer></script>
+
+        <link rel="stylesheet" href="blog.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="https://krassnig.dev">krassnig.dev</a>
+                <a href="https://krassnig.dev/blog">Blog</a>
+                <a href="https://krassnig.dev/projects">Projects</a>
+            </nav>
+        </header>
+        <h1 id="use-destructuring-to-handle-forms-in-react-">Use Destructuring To Handle Forms In React!</h1>
+        <main>
+            <article>
+
+
+<p>There have been numerous attempts at handling forms in React such as
+<a href="https://formik.org/">Formik</a>,
+<a href="https://www.react-hook-form.com/">React Hook Form</a>
+and
+<a href="https://redux-form.com/">Redux Form</a>.
+All of these libraries assist you by managing your form state for you.</p>
+<p>However, <code>useDestructuring</code> takes a different approach.
+Instead of managing your state for you, it allows you to manage your own state,
+resulting in simplified forms and greater decoupling between components.</p>
+<p>The source code of <code>useDestructuring</code> can be found in the
+<a href="https://github.com/Krassnig/use-destructuring">Github repository</a> and
+<a href="https://www.npmjs.com/package/use-destructuring">NPM package</a>.</p>
+<h2 id="how-to-usedestructuring">How To useDestructuring</h2>
+<p><code>useDestructuring</code> generates corresponding <code>setState</code> functions for every property in the <code>person</code> object.
+Initially, this appears to just free you from writing <code>setPerson(oldState =&gt; { ...oldState, &#39;firstName&#39;: newName })</code>.
+However, when you start separating the form into individual components, this function will massively simplify the entire component tree and make each of those component reusable across your application.</p>
+<pre><code class="lang-tsx">import { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
+import useDestructuring <span class="hljs-keyword">from</span> <span class="hljs-string">"use-destructuring"</span>;
+
+<span class="hljs-keyword">interface</span> <span class="hljs-title">Person</span> {
+    firstName: <span class="hljs-keyword">string</span>;
+    lastName: <span class="hljs-keyword">string</span>;
+}
+
+export <span class="hljs-keyword">const</span> PersonForm: React.FC = () =&gt; {
+
+    <span class="hljs-keyword">const</span> [person, setPerson] = useState&lt;Person&gt;({ firstName: <span class="hljs-string">'John'</span>, lastName: <span class="hljs-string">'Smith'</span> });
+
+    <span class="hljs-keyword">const</span> { firstName, lastName } = person; <span class="hljs-comment">// Javascript object destructuring</span>
+    <span class="hljs-keyword">const</span> { setFirstName, setLastName } = useDestructuring(person, setPerson);
+
+    <span class="hljs-keyword">return</span> (
+        &lt;form&gt;
+            &lt;input type=<span class="hljs-string">"text"</span> <span class="hljs-keyword">value</span>={firstName} onChange={e =&gt; setFirstName(e.target.<span class="hljs-keyword">value</span>)} /&gt;
+            &lt;input type=<span class="hljs-string">"text"</span> <span class="hljs-keyword">value</span>={lastName}  onChange={e =&gt; setLastName(e.target.<span class="hljs-keyword">value</span>)} /&gt;
+        &lt;/form&gt;
+    );
+};
+</code></pre>
+<h2 id="abstraction">Abstraction</h2>
+<p>To share state between a parent and a child component two arguments must be passed from the parent to the child component, one for reading state and one for updating state.
+Reacts type definition for updating state is not very straightforward and implementing the type definition is even more complicated.</p>
+<pre><code class="lang-ts"><span class="hljs-built_in">type</span> ReactSetState&lt;<span class="hljs-built_in">T</span>&gt; = React.Dispatch&lt;React.SetStateAction&lt;<span class="hljs-built_in">T</span>&gt;&gt;;
+<span class="hljs-built_in">type</span> ReactSetState&lt;<span class="hljs-built_in">T</span>&gt; = (val<span class="hljs-symbol">ue:</span> (<span class="hljs-built_in">T</span> | ((prevSta<span class="hljs-symbol">te:</span> <span class="hljs-built_in">T</span>) =&gt; <span class="hljs-built_in">T</span>))) =&gt; void;
+</code></pre>
+<p>However, it allows you to hold state in a parent component while retaining full control over that state in its child component.
+For instance, what if were to extract the <code>&lt;input /&gt;</code> from the previous example and place it into its own component.</p>
+<p>TextInput.tsx</p>
+<pre><code class="lang-tsx"><span class="hljs-keyword">type</span> <span class="hljs-type">Props</span> = {
+    text: string,
+    setText: <span class="hljs-type">React</span>.<span class="hljs-type">Dispatch</span>&lt;<span class="hljs-type">React</span>.<span class="hljs-type">SetStateAction</span>&lt;string&gt;&gt;
+}
+
+<span class="hljs-title">const</span> <span class="hljs-type">TextInput</span>: <span class="hljs-type">React</span>.<span class="hljs-type">FC</span>&lt;<span class="hljs-type">Props</span>&gt; = ({ text, setText }) =&gt; {
+    return (
+        &lt;input <span class="hljs-keyword">type</span>="text" value={text} onChange={e =&gt; setText(e.target.value)} /&gt;
+    );
+};
+</code></pre>
+<p>Inside the <code>TextInput</code> component, our main concern is the text string.
+However, in the <code>PersonForm</code>, we might have a more complex object like <code>Person</code>.
+This is precisely where the utility <code>useDestructuring</code> becomes apparent.
+It automatically generates all the necessary <code>ReactSetState</code> functions,
+enabling you to keep the <code>TextInput</code> component decoupled from the more complex <code>PersonForm</code> component.
+The only way these two components remain coupled is through their shared state which follows Reacts convention for two way binding given by useState.</p>
+<p>PersonForm.tsx</p>
+<pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { useState } from <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> useDestructuring from <span class="hljs-string">"use-destructuring"</span>;
+
+interface Person {
+    firstName: <span class="hljs-keyword">string</span>;
+    lastName: <span class="hljs-keyword">string</span>;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> PersonForm: React.FC = () =&gt; {
+
+    <span class="hljs-keyword">const</span> [person, setPerson] = useState&lt;Person&gt;({ firstName: <span class="hljs-string">'John'</span>, lastName: <span class="hljs-string">'Smith'</span> });
+
+    <span class="hljs-keyword">const</span> { firstName, lastName } = person; <span class="hljs-comment">// Javascript object destructuring</span>
+    <span class="hljs-keyword">const</span> { setFirstName, setLastName } = useDestructuring(person, setPerson);
+
+    <span class="hljs-built_in">return</span> (
+        &lt;form&gt;
+            &lt;TextInput <span class="hljs-built_in">text</span>={firstName} setText={setFirstName} /&gt;
+            &lt;TextInput <span class="hljs-built_in">text</span>={lastName} setText={setLastName} /&gt;
+        &lt;/form&gt;
+    );
+};
+</code></pre>
+<h2 id="arrays">Arrays</h2>
+<p><code>useDestructuring</code> can also be utilized to destructure arrays.
+For instance, let&#39;s extend the <code>Person</code> object by including a list of phone numbers.
+To keep the example component comprehensible a new component <code>PhoneNumbersInput</code> is created.</p>
+<pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { useState } from <span class="hljs-string">"react"</span>;
+<span class="hljs-keyword">import</span> useDestructuring from <span class="hljs-string">"use-destructuring"</span>;
+
+interface Person {
+    firstName: string;
+    lastName: string;
+    phoneNumbers: string[];
+}
+
+export const PersonForm: React.FC = () =&gt; {
+
+    const [person, setPerson] = useState&lt;Person&gt;({
+        firstName: <span class="hljs-string">'John'</span>,
+        lastName: <span class="hljs-string">'Smith'</span>,
+        phoneNumbers: []
+    });
+
+    const { firstName, lastName, phoneNumbers } = person;
+    const { setFirstName, setLastName, setPhoneNumbers } = useDestructuring(person, setPerson);
+
+    return (
+        &lt;form&gt;
+            &lt;TextInput text={firstName} setText={setFirstName} /&gt;
+            &lt;TextInput text={lastName} setText={setLastName} /&gt;
+            &lt;PhoneNumbersInput phoneNumbers={phoneNumbers} setPhoneNumbers={setPhoneNumbers} /&gt;
+        &lt;/form&gt;
+    );
+};
+</code></pre>
+<p>Within the <code>PhoneNumbersInput</code> component, the array of phone numbers and the corresponding set state function is destructured into an array of 3-tuples.
+To generate a list of html elements, call the <code>.map()</code> function on the <code>destructuredPhoneNumbers</code>.
+Inside the <code>.map()</code> function callback, you can further destructure the first argument.
+This argument is then the 3-tuple, where the first two elements contain the <code>state</code> and <code>setState</code> function.
+Optionally, the third element can be used to remove the associated entry from the phone numbers array.</p>
+<pre><code class="lang-typescript">type DestructuredPhoneNumbers = [<span class="hljs-string">phoneNumber, setPhoneNumber, removePhoneNumber</span>][<span class="hljs-symbol"></span>];
+</code></pre>
+<pre><code class="lang-tsx"><span class="hljs-keyword">import</span> useDestructuring <span class="hljs-keyword">from</span> <span class="hljs-string">"use-destructuring"</span>;
+
+type Props = {
+    <span class="hljs-attr">phoneNumbers</span>: string[];
+    setPhoneNumbers: React.Dispatch&lt;React.SetStateAction&lt;string[]&gt;&gt;;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> PhoneNumbersInput: React.FC&lt;Props&gt; = <span class="hljs-function">(<span class="hljs-params">{ phoneNumbers, setPhoneNumbers }</span>) =&gt;</span> {
+
+    <span class="hljs-keyword">const</span> destructuredPhoneNumbers = useDestructuring(phoneNumbers, setPhoneNumbers);
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            { destructuredPhoneNumbers.map(([phoneNumber, setPhoneNumber, removePhoneNumber], i) =&gt; (
+                <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{i}</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">TextInput</span> <span class="hljs-attr">text</span>=<span class="hljs-string">{phoneNumber}</span> <span class="hljs-attr">setText</span>=<span class="hljs-string">{setPhoneNumber}</span> &gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> removePhoneNumber()}&gt;X<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+            )) }
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+                <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>
+                <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> setPhoneNumbers(oldPhoneNumbers =&gt; [...oldPhoneNumbers, '+01234567'])}
+            &gt;
+                Add New Telephone Number
+            <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    );
+}</span>
+</code></pre>
+<p>The only remaining aspect is the capability of adding new values to the phone numbers array.
+To add phone numbers, simply use the <code>setPhoneNumbers</code> function that is already present.</p>
+<h2 id="validation">Validation</h2>
+<p>Validation does not require any specialized logic when using <code>useDestructuring</code>.
+Simply writing the validating logic inside your component using the state.
+For example:</p>
+<pre><code class="lang-tsx"><span class="hljs-keyword">type</span> Props = {
+    phoneNumber: <span class="hljs-keyword">string</span>;
+    setPhoneNumber: React<span class="hljs-variable">.Dispatch</span>&lt;React<span class="hljs-variable">.SetStateAction</span>&lt;<span class="hljs-keyword">string</span>&gt;&gt;;
+}
+
+<span class="hljs-keyword">const</span> PhoneNumberInput: React<span class="hljs-variable">.FC</span>&lt;Props&gt; = ({ phoneNumber, setPhoneNumber }) =&gt; {
+    <span class="hljs-keyword">return</span> (
+        &lt;label&gt;
+            Phone Number:
+            &lt;<span class="hljs-keyword">input</span> <span class="hljs-keyword">type</span>=<span class="hljs-string">"text"</span> value={phoneNumber} onChange={e =&gt; setPhoneNumber(e<span class="hljs-variable">.target</span><span class="hljs-variable">.value</span>)} /&gt;
+            &lt;span className=<span class="hljs-string">"error"</span>&gt;
+                { !isValidPhoneNumber(phoneNumber)
+                    &amp;&amp; 'A phone number must start <span class="hljs-keyword">with</span> a + <span class="hljs-keyword">and</span> have at least <span class="hljs-number">6</span> digits.' }
+            &lt;/span&gt;
+        &lt;/label&gt;
+    );
+}
+
+<span class="hljs-keyword">const</span> isValidPhoneNumber = (phoneNumber: <span class="hljs-keyword">string</span>): boolean =&gt; {
+    <span class="hljs-keyword">return</span> /\+[<span class="hljs-number">0</span>-<span class="hljs-number">9</span>]{<span class="hljs-number">6</span>,}/<span class="hljs-variable">.test</span>(phoneNumber);
+}
+</code></pre>
+<p>To validate an entire form object, you could combine the individual property validators into one complete form object validator.</p>
+<h2 id="performance">Performance</h2>
+<p>By default, every time a React component rerenders <strong>ALL</strong> its child components also rerender.
+The video below illustrates the React rerending process.
+With each rerender, the components color becomes more red.</p>
+<p><video src="./assets/video-01-without-memo.mp4">VIDEO - Without Memo</video></p>
+<p>It is apparent that the entire form rerenders completely each time a key is pressed in any component.
+While this is fine most of the time, once a form grows in size and complexity it can become unresponsive and un<em>react</em>ive.</p>
+<p>To only rerender components with changed props, React components can be wrapped in <a href="https://react.dev/reference/react/memo">React.memo</a> calls.
+However, if functions are defined within React components, they are re-generated each time a component rerenders.
+Consequently, this would force child components that receive those functions to rerender, regardless of whether they are wrapped in a memo call or not.
+Even if the data passed onto them is not changed.
+To address this, the functions generated by <code>useDestructuring</code> are all memoized, meaning they do not change from one rerender to the next.
+For additional details on how to memoize your own functions, use the <a href="https://react.dev/reference/react/useCallback">useCallback</a> hook.</p>
+<p>In the example below, all components in the component tree are memoized with <code>React.memo</code>.
+As a consequence, only the leaf component that update state and all its parent components are rerendered.</p>
+<p><video src="./assets/video-02-with-memo.mp4">VIDEO - With Memo</video></p>
+<p>The state and setState generated by <code>useDestructuring</code> can also be passed onto multiple child components that will both rerender when either one is changed.
+In the video below, multiple distant components rerender because they share same state.</p>
+<p><video src="./assets/video-03-twins.mp4">VIDEO - Twins</video></p>
+<p>Rerender counts can be reduced further.
+Forms often contain components that rerender frequently, such as text components that rerender with each keypress.
+To minimize the rerendering of parents components for each keypress, the propagation of the state update can be delayed by a few hundred milliseconds.
+This approach ensures, that state update only propagate once the user stops typing.</p>
+<p><video src="./assets/video-04-debounce.mp4">VIDEO - Debounce</video></p>
+<p>You can try it out yourself
+<a href="https://krassnig.github.io/use-destructuring-performance/">here</a>
+and view the source code in the
+<a href="https://github.com/Krassnig/use-destructuring-performance">use-destructuring-performance repository</a>.</p>
+<h2 id="contribute">Contribute</h2>
+<p>To leave a comment please use the
+<a href="https://github.com/Krassnig/krassnig.dev/issues/2">krassnig.dev repository issue</a>.</p>
+<p>If you like this library, I would really appreciate a github star in the
+<a href="https://github.com/Krassnig/no-async-hook">use-destructuring repository</a>.</p>
+<p>Thanks for reading ^^</p>
+
+
+            </article>
+        </main>
+    </body>
+</html>
