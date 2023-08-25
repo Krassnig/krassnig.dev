@@ -261,6 +261,6 @@ To leave a comment please use the
 [krassnig.dev repository issue](https://github.com/Krassnig/krassnig.dev/issues/2).
 
 If you like this library, I would really appreciate a github star in the
-[use-destructuring repository](https://github.com/Krassnig/no-async-hook).
+[use-destructuring repository](https://github.com/Krassnig/use-destructuring).
 
 Thanks for reading ^^

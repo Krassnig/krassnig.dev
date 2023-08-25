@@ -320,8 +320,8 @@ useEffect(() => {
 
 However, using this approach has a few downsides.
 The `ignore` variable can only be used inside the `useEffect` lambda.
-Should you attempt to it onto `fetchResults`, its value would remain unaffected inside `fetchResults`.
-Also, as this solution does not utilize `AbortSignal`s, request have to completion, wasting resources in the process.
+Should you attempt to pass the `ignore` variable onto `fetchResults`, its value would remain unaffected inside `fetchResults`.
+Also, as this solution does not utilize `AbortSignal`s, request have to run to completion, wasting resources in the process.
 Lastly, as the complexity of the effect grows, it becomes harder to implement correctly and consequently also harder to read.
 
 [Still love you Dan ;)](https://github.com/TodePond/C/blob/v0.9.9.9.9.9.9.9.9d/wallpaper_dont_upload.png)
@@ -329,7 +329,7 @@ Lastly, as the complexity of the effect grows, it becomes harder to implement co
 ## Effect
 
 The inverse function of `Async` is `Effect` and is used to convert a callback style functions into promises.
-It has almost the exact same syntax as `useEffect`. Consequently, implementing an `Effect` should not need an explanation.
+It has almost the exact same signature as `useEffect`. Consequently, implementing an `Effect` should not need an explanation.
 
 ```typescript
 useEffect(() => Async(async signal => {
@@ -341,7 +341,7 @@ useEffect(() => Async(async signal => {
 }), [...]);
 ```
 
-The main differences between `useEffect` and `Effect` are that instead of passing a dependency array it accepts an `AbortSignal` and `Effect` provides a `resolve` function to fulfill the returned promise.
+The main differences between `useEffect` and `Effect` are that instead of passing a dependency array it accepts an `AbortSignal` and it provides a `resolve` function to fulfill the returned promise.
 Additionally, you can improve the readability of your code by wrapping `Effect` calls within async functions.
 
 ```typescript
@@ -408,7 +408,7 @@ useEffect(() => Async(async signal => {
 ## Why The Uppercase Naming?
 
 Honestly, I am not too sure myself.
-I am well aware that I am deviating Javascript's convention, but it just kind of has a nice aestethic.
+I am well aware that I am deviating from Javascript's convention, but it just kind of has a nice aestethic.
 
 If I were to make up a justification:
 In React, hooks are usually named `use` followed by a noun.
