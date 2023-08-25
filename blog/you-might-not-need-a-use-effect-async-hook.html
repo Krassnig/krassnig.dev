@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>You Might Not Need A useEffectAsync Hook</title>
-		<meta charset="utf-8" />
+    <head>
+        <title>You Might Not Need A useEffectAsync Hook</title>
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="prism.css">
+        <link rel="stylesheet" href="prism.css">
         <script src="prism.js" defer></script>
 
-		<link rel="stylesheet" href="blog.css" />
-	</head>
-	<body>
-		<header>
+        <link rel="stylesheet" href="blog.css" />
+    </head>
+    <body>
+        <header>
             <nav>
                 <a href="https://krassnig.dev">krassnig.dev</a>
                 <a href="https://krassnig.dev/blog">Blog</a>
@@ -19,21 +19,21 @@
             </nav>
         </header>
         <h1 id="you-might-not-need-a-useeffectasync-hook">You Might Not Need A useEffectAsync Hook</h1>
-		<main>
-			<article>
+        <main>
+            <article>
 
 
-<h3 id="or-alternatively-how-to-use-async-functions-in-react">Or Alternatively: How To Use Async Functions In React</h3>
-<p>There is numerous attempts at handling async programming in React.
-Many of those attempts introduce a new hook that is named some version of <code>useAsync</code>,
-but creating a custom hook with dependencies has one big downside.
-The depency array is no longer statically verifiable by eslint.</p>
-<p>This article describes how to work around that problem and how simple using async can be in React.</p>
-<p>The source code for the library used in this article can be found in this
+<p>There are numerous attempts at handling async programming in React.
+Many of those attempts introduce a new hook named something along the lines of <code>useAsync</code>.
+However, creating a custom hook with dependencies come with a significant drawback:
+the dependency array can no longer be statically verified by ESLint.</p>
+<p>This article describes how to overcome that problem and demonstrate how straightforward using async programming can be in React.</p>
+<p>The source code for the code used in this article can be found in this
 <a href="https://github.com/Krassnig/no-async-hook">Github repository</a> and
 <a href="https://www.npmjs.com/package/no-async-hook">NPM package</a>.</p>
-<h2 id="converting-to-async">Async</h2>
-<p>The <code>Async</code> function allows you to write a normal async function and converts that async function into a function that <code>useEffect</code> can control.</p>
+<h2 id="async">Async</h2>
+<p>The <code>Async</code> function enables you to write a typical async functions.
+That function is passed to <code>Async</code> and then transformed into a function that can be used by <code>useEffect</code>.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Async } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 <span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
 
@@ -54,15 +54,15 @@ The depency array is no longer statically verifiable by eslint.</p>
     );
 }
 </code></pre>
-<p>Inside the async function you can do async operations as you normally would.
-Since <code>Async</code> is just another function called inside <code>useEffect</code>,
-eslint verifies missing dependencies like it would for any other function inside <code>useEffect</code>.
-For example, if the <code>personId</code> were to be forgotten inside the <code>useEffect</code> dependency array,
-eslint would warn you with the message:
+<p>Wihtin the async function, you can perform any async operations as you normally would.
+And since <code>Async</code> is essentially just another function called inside <code>useEffect</code>,
+ESLint verifies missing dependencies the same as it would for any other function inside <code>useEffect</code>.
+For example, if the <code>personId</code> were to be forgotten in the <code>useEffect</code> dependency array,
+ESLint would warn you with the message:
 <code>React Hook useEffect has a missing dependency: &#39;personId&#39;. Either include it or remove the dependency array  react-hooks/exhaustive-deps</code>.</p>
-<h2 id="converting-to-effect">Effect</h2>
+<h2 id="effect">Effect</h2>
 <p>The inverse function of <code>Async</code> is <code>Effect</code> and is used to convert callback style functions into promises.
-If you know how to implement a timer with <code>useEffect</code> already, you can easily implement an async/await implementation through the <code>Effect</code> function.</p>
+If you are already familiar with <code>useEffect</code>, you can easily create an async/await function from pre-existing non-async functions.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Effect } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 
 <span class="hljs-keyword">const</span> delay = (milliseconds: number, <span class="hljs-attr">signal</span>: AbortSignal): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; =&gt; {
@@ -72,10 +72,10 @@ If you know how to implement a timer with <code>useEffect</code> already, you ca
     }, signal);
 }
 </code></pre>
-<p>You can find more on <code>Effect</code> in the <a href="#effect">Effect Section</a> of this article.</p>
+<p><code>Effect</code> is explained in more detail in the <a href="#effect">Effect Section</a> of this article.</p>
 <h2 id="back-to-async">Back To Async</h2>
 <h3 id="why-the-extra-in-front-of-async-">Why The Extra <code>() =&gt;</code> In Front Of <code>Async</code></h3>
-<pre><code class="lang-typescript"><span class="hljs-comment">// DO NOT do this, theoretically possible</span>
+<pre><code class="lang-typescript"><span class="hljs-comment">// DO NOT do this, could be a possible implementation</span>
 useEffect(Async(async signal =&gt; <span class="hljs-comment">{
 
 }</span>), [...]);
@@ -83,13 +83,10 @@ useEffect(Async(async signal =&gt; <span class="hljs-comment">{
 <span class="hljs-keyword">type</span> TheoreticalAsync = (promise: (...) =&gt; Promise&lt;void&gt;) =&gt; (() =&gt; <span class="hljs-function"><span class="hljs-keyword">Destructor</span>);</span>
 <span class="hljs-keyword">type</span> <span class="hljs-function"><span class="hljs-keyword">Destructor</span> = <span class="hljs-params">()</span> =&gt; <span class="hljs-title">void</span>;</span>
 </code></pre>
-<p>Although you could encapsulate the outermost lambda as well,
-eslint would give the following error
+<p>Although the outermost lambda could be encapsulated, ESLint would give the following error
 <code>React Hook useEffect received a function whose dependencies are unknown. Pass an inline function instead react-hooks/exhaustive-deps</code>.
-Since eslint does not verify this function,
-<code>Async</code> has to be implemented in a way that immediately execute the promise.
-Eslint probably enforces this rule because a developer might match the signature of <code>useEffect</code>,
-yet break the expected behavior of <code>useEffect</code>.</p>
+Since ESLint does not verify that version of <code>Async</code>, it must be implemented in a way that immediately execute the promise.
+ESLint probably enforces this rule because a developer could match the <code>useEffect</code> signature while inadvertently breaking its intended behavior.</p>
 <pre><code class="lang-typescript"><span class="hljs-comment">// do this</span>
 useEffect(() =&gt; Async(async signal =&gt; <span class="hljs-comment">{
 
@@ -99,11 +96,11 @@ useEffect(() =&gt; Async(async signal =&gt; <span class="hljs-comment">{
 <span class="hljs-keyword">type</span> <span class="hljs-function"><span class="hljs-keyword">Destructor</span> = <span class="hljs-params">()</span> =&gt; <span class="hljs-title">void</span>;</span>
 </code></pre>
 <h2 id="abortsignal">AbortSignal</h2>
-<p>An important aspect of asynchronous programming is the capability to cancel async functions at any given moment.
-Without it, an async function is forced to run to completion and cannot be stopped.
-Even without async functions React has a build in way to cancel effects by letting the user return a cleanup function.
+<p>An important aspect of asynchronous programming is the ability to cancel async functions at any given moment.
+Without this capability, an async function is forced to run to completion and cannot be stopped.
+Even without async functions, React offers a build in way to cancel effects by allowing you to return a cleanup function.
 Inside this cleanup function any resource that is created is cancelled and cleaned up.
-For example, the <code>Timer</code> component creates an effect with <code>setInteval</code> and removes the effect with <code>clearInterval</code>.
+For example, the <code>Timer</code> component below creates an effect with <code>setInteval</code> and removes the effect with <code>clearInterval</code>.
 By providing React with a callback to <code>clearInterval</code> the effect can be cancelled at any moment.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
 
@@ -128,10 +125,10 @@ By providing React with a callback to <code>clearInterval</code> the effect can 
     );
 }
 </code></pre>
-<p>Similarly, when using <code>Async</code> the
+<p>Likewise, when using <code>Async</code> the
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal"><code>AbortSignal</code></a>
 is used to abort and cleanup promises.
-This <code>AbortSignal</code> is provided to every async function that is called.
+This <code>AbortSignal</code> is supplied to each invoked async function.
 The caller who holds the
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController"><code>AbortController</code></a>
 can then interrupt the promise by calling <code>controller.abort(reason: any)</code>.
@@ -165,10 +162,10 @@ Rewriting the <code>Timer</code> using <code>AbortSignal</code> with correct err
     <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> controller.abort(promiseAborted);
 }, [rerender]);
 </code></pre>
-<p>To successfully interrupt a promise the error should be caught at the top level function.
-Otherwise, each time a promise is aborted an error is printed to the console.
-Yet we still want to rethrow any non-cancellation errors since they contain relevant information about potential errors in our programs.</p>
-<p>The example above obviously has quite lot of boilerplate that would be repeated for every async <code>useEffect</code>.
+<p>To successfully interrupt a promise the error should be caught in the function calling the promise.
+Failing to do so, would result in a print to the console for each aborted promise.
+Yet we still want to rethrow any non-cancellation errors, as they contain relevant information about potential errors in our programs.</p>
+<p>The example above obviously has quite a lot of boilerplate that would be repeated for every async <code>useEffect</code>.
 This boilerplate is what <code>Async</code> allows you to abstracts.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Async } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 <span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
@@ -193,12 +190,12 @@ This boilerplate is what <code>Async</code> allows you to abstracts.</p>
     );
 }
 </code></pre>
-<p>By using <code>Async</code> in the <code>Timer</code> component we only see the async code we care about,
-which is the for loop which updates the seconds that have passed.</p>
+<p>By using <code>Async</code> in the <code>Timer</code> component we only see the async code we really care about:
+the for loop that updates the seconds.</p>
 <h3 id="how-to-implement-abortable-promises">How To Implement Abortable Promises</h3>
-<p>Inside promises we need to use the <code>AbortSignal</code> to properly abort promises.
+<p>Inside promises we need to use the <code>AbortSignal</code> to effectively abort promises.
 When <code>controller.abort(reason: any)</code> is called the associated <code>controller.signal</code> is aborted
-and the <code>reason</code> provided should (ideally) be thrown from the inside async function.</p>
+Ideally, the <code>reason</code> should be thrown from the inside async function.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> myAsyncFunction = <span class="hljs-keyword">async</span> (<span class="hljs-keyword">signal</span><span class="hljs-string"></span>: AbortSignal): Promise&lt;any&gt; =&gt; {
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt;= <span class="hljs-number">20</span>; i++) {
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">signal</span><span class="hljs-string">.aborted) {</span>
@@ -213,9 +210,10 @@ and the <code>reason</code> provided should (ideally) be thrown from the inside 
     }
 }
 </code></pre>
-<p>Inside the async function you can either test whether the signal has been aborted or subscribe to the <code>abort</code> event depending on your use case.
-You should prefer the latter if possible.
-The example below is implemented by subscribing to the <code>&#39;abort&#39;</code> event, but it is quite complicated.</p>
+<p>In async functions, you either have the option to test whether the signal has been aborted or subscribe to the <code>abort</code> event.
+If feasible, prefer the latter.
+The example below demostrates how a promise could be implemented by subscribing to an <code>&#39;abort&#39;</code> event.
+However, as you can see it is quite complicated and easy to get wrong.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> delay = (milliSeconds: number, <span class="hljs-attr">signal</span>: AbortSignal): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; =&gt; {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
         <span class="hljs-keyword">const</span> cleanUp = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
@@ -237,23 +235,24 @@ The example below is implemented by subscribing to the <code>&#39;abort&#39;</co
     });
 }
 </code></pre>
-<p>As you have already seen in the <a href="#converting-to-effect">Introduction</a> of this article there is an easier way of implementing this function using the <code>Effect</code> function instead.</p>
+<p>As demonstrated earlier, the <code>Effect</code> function significantly simplifies the implentation of such Promises.</p>
 <h3 id="support-for-abortsignal">Support For AbortSignal</h3>
 <p>Abort Signals are supported by both
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Request/signal">fetch</a>
 and
 <a href="https://axios-http.com/docs/cancellation">axios</a>.
-Since
+However, since
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort">XHR</a>
-is not async it does not support <code>AbortSignal</code>s but it has an <code>abort</code> method to achieve the same effect.</p>
-<p>Sadly, both <code>fetch</code> and <code>axios</code> throw custom errors when cancelling http requests.
-However, there is a work-around.</p>
+is not implemented through promises, it does not support <code>AbortSignal</code>s.
+Instead, it offers an <code>abort</code> method to achieve the same effect.</p>
 <h3 id="how-to-handle-errors-with-abortsignal">How To Handle Errors With AbortSignal</h3>
-<p>Cancellation errors thrown inside async function should not be caught in general.
-Instead, they should be rethrown until they reach the orignal caller of the async function.</p>
-<p>However, checking for a specific error is difficult if you neither have controll over the error thrown by the callee nor the error provided by the caller.
-To work around that limitation the signal can be checked to see if it has already been aborted.
-Through this you can infer that the error is <em>almost</em> centrainly a cancellation error without having to check for a specific value.</p>
+<p>Cancellation errors thrown inside async function should not be caught.
+Rather, they should be rethrown until they reach the initial caller of the async function.</p>
+<p>Unfortunately, both <code>fetch</code> and <code>axios</code> throw custom errors when HTTP requests are cancelled.
+However, targeting a specific error reduces the overall generality of your async functions.
+Thankfully, there is a work around even when you have no controll over the error thrown by the callee and the error provided by the caller.</p>
+<p>Within each <code>catch</code> block, check whether the signal has already been aborted.
+Through this approach you can infer that the error is <em>almost</em> centrainly a cancellation error.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> myAsyncFunction = <span class="hljs-keyword">async</span> (<span class="hljs-keyword">signal</span><span class="hljs-string"></span>: AbortSignal): Promise&lt;any&gt; =&gt; {
     <span class="hljs-title">try</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">await</span> anotherAsyncFunction(<span class="hljs-keyword">signal</span><span class="hljs-string">)</span>;
@@ -272,10 +271,9 @@ Through this you can infer that the error is <em>almost</em> centrainly a cancel
 <h2 id="reacts-documentation-for-fechting-data">Reacts Documentation For Fechting Data</h2>
 <p>The React documentation on
 <a href="https://react.dev/learn/you-might-not-need-an-effect">You Might Not Need an Effect</a> 
-contains a section on how to handle asynchronous calls inside the
-<a href="https://react.dev/learn/you-might-not-need-an-effect#fetching-data">Fetching Data</a>
-section.
-In it they recommend setting a boolean value to track whether a request is considered &quot;stale&quot; or if it should call the <code>setState</code> function.</p>
+contains a section dedicated to asynchronous programming called
+<a href="https://react.dev/learn/you-might-not-need-an-effect#fetching-data">Fetching Data</a>.
+In this section it is suggested, that a boolean value can be used to track whether a requests response is considered &quot;stale&quot; or if it should still call the <code>setState</code> function.</p>
 <p>The following example is given:</p>
 <pre><code class="lang-typescript">useEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
     <span class="hljs-keyword">let</span> ignore = <span class="hljs-literal">false</span>;
@@ -289,15 +287,15 @@ In it they recommend setting a boolean value to track whether a request is consi
     };
 }, [query, page]);
 </code></pre>
-<p>Using this approach has a few downsides.
+<p>However, using this approach has a few downsides.
 The <code>ignore</code> variable can only be used inside the <code>useEffect</code> lambda.
-If you tried to pass <code>ignore</code> onto <code>fetchResults</code> it would not change its value inside <code>fetchResults</code> once the cleanup function is executed.
-Since this solution does not use <code>AbortSignal</code>s request also has to run to completion.
-And lastly, once the effect grows in complexity it will become very hard to read.</p>
+Should you attempt to it onto <code>fetchResults</code>, its value would remain unaffected inside <code>fetchResults</code>.
+Also, as this solution does not utilize <code>AbortSignal</code>s, request have to completion, wasting resources in the process.
+Lastly, as the complexity of the effect grows, it becomes harder to implement correctly and consequently also harder to read.</p>
 <p><a href="https://github.com/TodePond/C/blob/v0.9.9.9.9.9.9.9.9d/wallpaper_dont_upload.png">Still love you Dan ;)</a></p>
 <h2 id="effect">Effect</h2>
-<p>The inverse function of <code>Async</code> is <code>Effect</code> and is used to convert a callback style function into a promise.
-Inside <code>Effect</code> you can write code just like inside a <code>useEffect</code> lambda.</p>
+<p>The inverse function of <code>Async</code> is <code>Effect</code> and is used to convert a callback style functions into promises.
+It has almost the exact same syntax as <code>useEffect</code>. Consequently, implementing an <code>Effect</code> should not need an explanation.</p>
 <pre><code class="lang-typescript">useEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Async(<span class="hljs-keyword">async</span> signal =&gt; {
     <span class="hljs-keyword">await</span> Effect&lt;<span class="hljs-keyword">void</span>&gt;(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> {
         <span class="hljs-keyword">const</span> timeoutId = setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> resolve(), <span class="hljs-number">1000</span>);
@@ -306,9 +304,8 @@ Inside <code>Effect</code> you can write code just like inside a <code>useEffect
     <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> endpoint.findById(..., signal);
 }), [...]);
 </code></pre>
-<p>The main difference between <code>useEffect</code> and <code>Effect</code> is that instead of passing a dependency array to <code>Effect</code> it accepts an <code>AbortSignal</code> and provides a <code>resolve</code> function to fulfill the promise.
-With <code>Effect</code> any callback style function can be converted into a promise easily.
-Furthermore, these promises can be wrapped inside async functions to simplify async <code>useEffect</code> even more.</p>
+<p>The main differences between <code>useEffect</code> and <code>Effect</code> are that instead of passing a dependency array it accepts an <code>AbortSignal</code> and <code>Effect</code> provides a <code>resolve</code> function to fulfill the returned promise.
+Additionally, you can improve the readability of your code by wrapping <code>Effect</code> calls within async functions.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> delay = (<span class="hljs-attribute">milliseconds</span>: number, <span class="hljs-keyword">signal</span><span class="hljs-string"></span>: AbortSignal): Promise&lt;<span class="hljs-keyword">void</span>&gt; =&gt; {
     <span class="hljs-keyword">return</span> Effect&lt;<span class="hljs-keyword">void</span>&gt;(resolve =&gt; {
         <span class="hljs-keyword">const</span> timeoutId = setTimeout(() =&gt; resolve(), milliseconds);
@@ -322,8 +319,8 @@ useEffect(() =&gt; Async(<span class="hljs-keyword">async</span> <span class="hl
 }), [...]);
 </code></pre>
 <h3 id="awaiting-values">Awaiting Values</h3>
-<p><code>Effect</code> can also await values and <code>reject</code> promises.
-Here is an example that converts an <code>XMLHttpRequest</code> into a promise.</p>
+<p><code>Effect</code> can also be used for awaiting values and rejecting promises.
+Here is an example that converts an <code>XMLHttpRequest</code> into a promise and rejects that promise should the HTTP request err.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">import</span> { Effect } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 
 <span class="hljs-keyword">const</span> xhrGet = (url: string, <span class="hljs-attr">signal</span>: AbortSignal): <span class="hljs-built_in">Promise</span>&lt;string&gt; =&gt; {
@@ -350,8 +347,8 @@ Here is an example that converts an <code>XMLHttpRequest</code> into a promise.<
 }
 </code></pre>
 <h3 id="awaiting-cleanup">Awaiting Cleanup</h3>
-<p><code>Effect</code> can be used to execute code after a <code>useEffect</code> is cleaned up.
-Simply resolve the <code>Effect</code> inside the <code>Effect</code>s cleanup function.</p>
+<p><code>Effect</code> can even be used to execute code once the <code>useEffect</code> cleaned up has been triggered.
+You can achieve that by simply resolving the <code>Effect</code> inside its cleanup function.</p>
 <pre><code class="lang-typescript">useEffect(() =&gt; Async(<span class="hljs-name">async</span> signal =&gt; {
     console.log('applying the effect.')<span class="hljs-comment">;</span>
 
@@ -362,42 +359,42 @@ Simply resolve the <code>Effect</code> inside the <code>Effect</code>s cleanup f
 </code></pre>
 <h2 id="why-the-uppercase-naming-">Why The Uppercase Naming?</h2>
 <p>Honestly, I am not too sure myself.
-I am well aware that I am breaking Javascripts convention, but it just kind of feels and looks nice.</p>
-<p>If I had to make up a reason:
-Hooks in React are usually named <code>use</code> plus a noun, so what happens if you remove the hook part? You end up with just a noun in uppercase.
+I am well aware that I am deviating Javascript&#39;s convention, but it just kind of has a nice aestethic.</p>
+<p>If I were to make up a justification:
+In React, hooks are usually named <code>use</code> followed by a noun.
+Now, what if we to strip away the aspect that makes it a hook?
+You would end up with just a noun in uppercase.
 Ultimately, if you feel like this rebellious convention breaking by me is too much, feel free to just copy the code from the
-<a href="https://github.com/Krassnig/no-async-hook">Github repository</a>
-and modify it for you own needs 😉.</p>
+<a href="https://github.com/Krassnig/no-async-hook/blob/main/no-async-hook.ts">Github repository</a>
+and modify it for your own needs 😉.</p>
 <h2 id="nesting">Nesting</h2>
-<p>If you are unsure which paradigm to use after reading this article,
-feel free to express that uncertainty by switching between both paradigms multiple times!</p>
-<pre><code class="lang-tsx">useEffect(
-    () =&gt; Async(
-        <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
-            () =&gt; Async(
-                <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
-                    () =&gt; Async(
-                        <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
-                            () =&gt; Async(
-                                <span class="hljs-keyword">async</span> () =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Hello World!'</span>); }
-                            ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
-                        )
-                    ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
-                )
-            ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
-        )
+<p>If you are unsure which style of function to use after reading this article,
+feel free to express that uncertainty by switching between both styles multiple times!</p>
+<pre><code class="lang-tsx">useEffect(() =&gt; Async(
+    <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
+        () =&gt; Async(
+            <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
+                () =&gt; Async(
+                    <span class="hljs-keyword">async</span> <span class="hljs-keyword">signal</span><span class="hljs-string"> </span>=&gt; <span class="hljs-keyword">await</span> Effect(
+                        () =&gt; Async(
+                            <span class="hljs-keyword">async</span> () =&gt; { <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Hello World!'</span>); }
+                        ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
+                    )
+                ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
+            )
+        ), <span class="hljs-keyword">signal</span><span class="hljs-string"></span>
     )
-);
+), []);
 </code></pre>
 <h2 id="contribute">Contribute</h2>
 <p>To leave a comment please use the
 <a href="https://github.com/Krassnig/krassnig.dev/issues/1">krassnig.dev repository issue</a>.
-If you like this library I would really appreciate a github star in the
+If you like this library, I would really appreciate a github star in the
 <a href="https://github.com/Krassnig/no-async-hook">no-async-hook repository</a>.</p>
 <p>Thanks for reading ^^</p>
 
 
-			</article>
-		</main>
-	</body>
+            </article>
+        </main>
+    </body>
 </html>

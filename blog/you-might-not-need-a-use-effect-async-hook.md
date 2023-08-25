@@ -1,21 +1,20 @@
 # You Might Not Need A useEffectAsync Hook
 
-### Or Alternatively: How To Use Async Functions In React
+There are numerous attempts at handling async programming in React.
+Many of those attempts introduce a new hook named something along the lines of `useAsync`.
+However, creating a custom hook with dependencies come with a significant drawback:
+the dependency array can no longer be statically verified by ESLint.
 
-There is numerous attempts at handling async programming in React.
-Many of those attempts introduce a new hook that is named some version of `useAsync`,
-but creating a custom hook with dependencies has one big downside.
-The depency array is no longer statically verifiable by eslint.
+This article describes how to overcome that problem and demonstrate how straightforward using async programming can be in React.
 
-This article describes how to work around that problem and how simple using async can be in React.
-
-The source code for the library used in this article can be found in this
+The source code for the code used in this article can be found in this
 [Github repository](https://github.com/Krassnig/no-async-hook) and
 [NPM package](https://www.npmjs.com/package/no-async-hook).
 
 ## Async
 
-The `Async` function allows you to write a normal async function and converts that async function into a function that `useEffect` can control.
+The `Async` function enables you to write a typical async functions.
+That function is passed to `Async` and then transformed into a function that can be used by `useEffect`.
 
 ```tsx
 import { Async } from "no-async-hook";
@@ -39,17 +38,17 @@ const PersonComponent: React.FC = ({ personId }) => {
 }
 ```
 
-Inside the async function you can do async operations as you normally would.
-Since `Async` is just another function called inside `useEffect`,
-eslint verifies missing dependencies like it would for any other function inside `useEffect`.
-For example, if the `personId` were to be forgotten inside the `useEffect` dependency array,
-eslint would warn you with the message:
+Wihtin the async function, you can perform any async operations as you normally would.
+And since `Async` is essentially just another function called inside `useEffect`,
+ESLint verifies missing dependencies the same as it would for any other function inside `useEffect`.
+For example, if the `personId` were to be forgotten in the `useEffect` dependency array,
+ESLint would warn you with the message:
 `React Hook useEffect has a missing dependency: 'personId'. Either include it or remove the dependency array  react-hooks/exhaustive-deps`.
 
 ## Effect
 
 The inverse function of `Async` is `Effect` and is used to convert callback style functions into promises.
-If you know how to implement a timer with `useEffect` already, you can easily implement an async/await implementation through the `Effect` function.
+If you are already familiar with `useEffect`, you can easily create an async/await function from pre-existing non-async functions.
 
 ```tsx
 import { Effect } from "no-async-hook";
@@ -62,14 +61,14 @@ const delay = (milliseconds: number, signal: AbortSignal): Promise<void> => {
 }
 ```
 
-You can find more on `Effect` in the [Effect Section](#effect) of this article.
+`Effect` is explained in more detail in the [Effect Section](#effect) of this article.
 
 ## Back To Async
 
 ### Why The Extra `() => ` In Front Of `Async`
 
 ```typescript
-// DO NOT do this, theoretically possible
+// DO NOT do this, could be a possible implementation
 useEffect(Async(async signal => {
     
 }), [...]);
@@ -78,13 +77,10 @@ type TheoreticalAsync = (promise: (...) => Promise<void>) => (() => Destructor);
 type Destructor = () => void;
 ```
 
-Although you could encapsulate the outermost lambda as well,
-eslint would give the following error
+Although the outermost lambda could be encapsulated, ESLint would give the following error
 `React Hook useEffect received a function whose dependencies are unknown. Pass an inline function instead react-hooks/exhaustive-deps`.
-Since eslint does not verify this function,
-`Async` has to be implemented in a way that immediately execute the promise.
-Eslint probably enforces this rule because a developer might match the signature of `useEffect`,
-yet break the expected behavior of `useEffect`.
+Since ESLint does not verify that version of `Async`, it must be implemented in a way that immediately execute the promise.
+ESLint probably enforces this rule because a developer could match the `useEffect` signature while inadvertently breaking its intended behavior.
 
 ```typescript
 // do this
@@ -98,11 +94,11 @@ type Destructor = () => void;
 
 ## AbortSignal
 
-An important aspect of asynchronous programming is the capability to cancel async functions at any given moment.
-Without it, an async function is forced to run to completion and cannot be stopped.
-Even without async functions React has a build in way to cancel effects by letting the user return a cleanup function.
+An important aspect of asynchronous programming is the ability to cancel async functions at any given moment.
+Without this capability, an async function is forced to run to completion and cannot be stopped.
+Even without async functions, React offers a build in way to cancel effects by allowing you to return a cleanup function.
 Inside this cleanup function any resource that is created is cancelled and cleaned up.
-For example, the `Timer` component creates an effect with `setInteval` and removes the effect with `clearInterval`.
+For example, the `Timer` component below creates an effect with `setInteval` and removes the effect with `clearInterval`.
 By providing React with a callback to `clearInterval` the effect can be cancelled at any moment.
 
 ```tsx
@@ -130,10 +126,10 @@ const Timer: React.FC = () => {
 }
 ```
 
-Similarly, when using `Async` the
+Likewise, when using `Async` the
 [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
 is used to abort and cleanup promises.
-This `AbortSignal` is provided to every async function that is called.
+This `AbortSignal` is supplied to each invoked async function.
 The caller who holds the
 [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
 can then interrupt the promise by calling `controller.abort(reason: any)`.
@@ -170,11 +166,11 @@ useEffect(() => {
 }, [rerender]);
 ```
 
-To successfully interrupt a promise the error should be caught at the top level function.
-Otherwise, each time a promise is aborted an error is printed to the console.
-Yet we still want to rethrow any non-cancellation errors since they contain relevant information about potential errors in our programs.
+To successfully interrupt a promise the error should be caught in the function calling the promise.
+Failing to do so, would result in a print to the console for each aborted promise.
+Yet we still want to rethrow any non-cancellation errors, as they contain relevant information about potential errors in our programs.
 
-The example above obviously has quite lot of boilerplate that would be repeated for every async `useEffect`.
+The example above obviously has quite a lot of boilerplate that would be repeated for every async `useEffect`.
 This boilerplate is what `Async` allows you to abstracts.
 
 ```tsx
@@ -202,14 +198,14 @@ const Timer: React.FC = () => {
 }
 ```
 
-By using `Async` in the `Timer` component we only see the async code we care about,
-which is the for loop which updates the seconds that have passed.
+By using `Async` in the `Timer` component we only see the async code we really care about:
+the for loop that updates the seconds.
 
 ### How To Implement Abortable Promises
 
-Inside promises we need to use the `AbortSignal` to properly abort promises.
+Inside promises we need to use the `AbortSignal` to effectively abort promises.
 When `controller.abort(reason: any)` is called the associated `controller.signal` is aborted
-and the `reason` provided should (ideally) be thrown from the inside async function.
+Ideally, the `reason` should be thrown from the inside async function.
 
 ```typescript
 const myAsyncFunction = async (signal: AbortSignal): Promise<any> => {
@@ -227,9 +223,10 @@ const myAsyncFunction = async (signal: AbortSignal): Promise<any> => {
 }
 ```
 
-Inside the async function you can either test whether the signal has been aborted or subscribe to the `abort` event depending on your use case.
-You should prefer the latter if possible.
-The example below is implemented by subscribing to the `'abort'` event, but it is quite complicated.
+In async functions, you either have the option to test whether the signal has been aborted or subscribe to the `abort` event.
+If feasible, prefer the latter.
+The example below demostrates how a promise could be implemented by subscribing to an `'abort'` event.
+However, as you can see it is quite complicated and easy to get wrong.
 
 ```typescript
 export const delay = (milliSeconds: number, signal: AbortSignal): Promise<void> => {
@@ -254,7 +251,7 @@ export const delay = (milliSeconds: number, signal: AbortSignal): Promise<void> 
 }
 ```
 
-As you have already seen in the [Introduction](#converting-to-effect) of this article there is an easier way of implementing this function using the `Effect` function instead.
+As demonstrated earlier, the `Effect` function significantly simplifies the implentation of such Promises.
 
 ### Support For AbortSignal
 
@@ -262,21 +259,23 @@ Abort Signals are supported by both
 [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Request/signal)
 and
 [axios](https://axios-http.com/docs/cancellation).
-Since
+However, since
 [XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort)
-is not async it does not support `AbortSignal`s but it has an `abort` method to achieve the same effect.
+is not implemented through promises, it does not support `AbortSignal`s.
+Instead, it offers an `abort` method to achieve the same effect.
 
-Sadly, both `fetch` and `axios` throw custom errors when cancelling http requests.
-However, there is a work-around.
 
 ### How To Handle Errors With AbortSignal
 
-Cancellation errors thrown inside async function should not be caught in general.
-Instead, they should be rethrown until they reach the orignal caller of the async function.
+Cancellation errors thrown inside async function should not be caught.
+Rather, they should be rethrown until they reach the initial caller of the async function.
 
-However, checking for a specific error is difficult if you neither have controll over the error thrown by the callee nor the error provided by the caller.
-To work around that limitation the signal can be checked to see if it has already been aborted.
-Through this you can infer that the error is *almost* centrainly a cancellation error without having to check for a specific value.
+Unfortunately, both `fetch` and `axios` throw custom errors when HTTP requests are cancelled.
+However, targeting a specific error reduces the overall generality of your async functions.
+Thankfully, there is a work around even when you have no controll over the error thrown by the callee and the error provided by the caller.
+
+Within each `catch` block, check whether the signal has already been aborted.
+Through this approach you can infer that the error is *almost* centrainly a cancellation error.
 
 ```typescript
 const myAsyncFunction = async (signal: AbortSignal): Promise<any> => {
@@ -299,10 +298,9 @@ const myAsyncFunction = async (signal: AbortSignal): Promise<any> => {
 
 The React documentation on
 [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) 
-contains a section on how to handle asynchronous calls inside the
-[Fetching Data](https://react.dev/learn/you-might-not-need-an-effect#fetching-data)
-section.
-In it they recommend setting a boolean value to track whether a request is considered "stale" or if it should call the `setState` function.
+contains a section dedicated to asynchronous programming called
+[Fetching Data](https://react.dev/learn/you-might-not-need-an-effect#fetching-data).
+In this section it is suggested, that a boolean value can be used to track whether a requests response is considered "stale" or if it should still call the `setState` function.
 
 The following example is given:
 
@@ -320,18 +318,18 @@ useEffect(() => {
 }, [query, page]);
 ```
 
-Using this approach has a few downsides.
+However, using this approach has a few downsides.
 The `ignore` variable can only be used inside the `useEffect` lambda.
-If you tried to pass `ignore` onto `fetchResults` it would not change its value inside `fetchResults` once the cleanup function is executed.
-Since this solution does not use `AbortSignal`s request also has to run to completion.
-And lastly, once the effect grows in complexity it will become very hard to read.
+Should you attempt to it onto `fetchResults`, its value would remain unaffected inside `fetchResults`.
+Also, as this solution does not utilize `AbortSignal`s, request have to completion, wasting resources in the process.
+Lastly, as the complexity of the effect grows, it becomes harder to implement correctly and consequently also harder to read.
 
 [Still love you Dan ;)](https://github.com/TodePond/C/blob/v0.9.9.9.9.9.9.9.9d/wallpaper_dont_upload.png)
 
 ## Effect
 
-The inverse function of `Async` is `Effect` and is used to convert a callback style function into a promise.
-Inside `Effect` you can write code just like inside a `useEffect` lambda.
+The inverse function of `Async` is `Effect` and is used to convert a callback style functions into promises.
+It has almost the exact same syntax as `useEffect`. Consequently, implementing an `Effect` should not need an explanation.
 
 ```typescript
 useEffect(() => Async(async signal => {
@@ -343,9 +341,8 @@ useEffect(() => Async(async signal => {
 }), [...]);
 ```
 
-The main difference between `useEffect` and `Effect` is that instead of passing a dependency array to `Effect` it accepts an `AbortSignal` and provides a `resolve` function to fulfill the promise.
-With `Effect` any callback style function can be converted into a promise easily.
-Furthermore, these promises can be wrapped inside async functions to simplify async `useEffect` even more.
+The main differences between `useEffect` and `Effect` are that instead of passing a dependency array it accepts an `AbortSignal` and `Effect` provides a `resolve` function to fulfill the returned promise.
+Additionally, you can improve the readability of your code by wrapping `Effect` calls within async functions.
 
 ```typescript
 const delay = (milliseconds: number, signal: AbortSignal): Promise<void> => {
@@ -363,8 +360,8 @@ useEffect(() => Async(async signal => {
 
 ### Awaiting Values
 
-`Effect` can also await values and `reject` promises.
-Here is an example that converts an `XMLHttpRequest` into a promise.
+`Effect` can also be used for awaiting values and rejecting promises.
+Here is an example that converts an `XMLHttpRequest` into a promise and rejects that promise should the HTTP request err.
 
 ```typescript
 import { Effect } from "no-async-hook";
@@ -395,8 +392,8 @@ const xhrGet = (url: string, signal: AbortSignal): Promise<string> => {
 
 ### Awaiting Cleanup
 
-`Effect` can be used to execute code after a `useEffect` is cleaned up.
-Simply resolve the `Effect` inside the `Effect`s cleanup function.
+`Effect` can even be used to execute code once the `useEffect` cleaned up has been triggered.
+You can achieve that by simply resolving the `Effect` inside its cleanup function.
 
 ```typescript
 useEffect(() => Async(async signal => {
@@ -411,44 +408,44 @@ useEffect(() => Async(async signal => {
 ## Why The Uppercase Naming?
 
 Honestly, I am not too sure myself.
-I am well aware that I am breaking Javascripts convention, but it just kind of feels and looks nice.
+I am well aware that I am deviating Javascript's convention, but it just kind of has a nice aestethic.
 
-If I had to make up a reason:
-Hooks in React are usually named `use` plus a noun, so what happens if you remove the hook part? You end up with just a noun in uppercase.
+If I were to make up a justification:
+In React, hooks are usually named `use` followed by a noun.
+Now, what if we to strip away the aspect that makes it a hook?
+You would end up with just a noun in uppercase.
 Ultimately, if you feel like this rebellious convention breaking by me is too much, feel free to just copy the code from the
-[Github repository](https://github.com/Krassnig/no-async-hook)
-and modify it for you own needs 😉.
+[Github repository](https://github.com/Krassnig/no-async-hook/blob/main/no-async-hook.ts)
+and modify it for your own needs 😉.
 
 ## Nesting
 
-If you are unsure which paradigm to use after reading this article,
-feel free to express that uncertainty by switching between both paradigms multiple times!
+If you are unsure which style of function to use after reading this article,
+feel free to express that uncertainty by switching between both styles multiple times!
 
 ```tsx
-useEffect(
-    () => Async(
-        async signal => await Effect(
-            () => Async(
-                async signal => await Effect(
-                    () => Async(
-                        async signal => await Effect(
-                            () => Async(
-                                async () => { console.log('Hello World!'); }
-                            ), signal
-                        )
-                    ), signal
-                )
-            ), signal
-        )
+useEffect(() => Async(
+    async signal => await Effect(
+        () => Async(
+            async signal => await Effect(
+                () => Async(
+                    async signal => await Effect(
+                        () => Async(
+                            async () => { console.log('Hello World!'); }
+                        ), signal
+                    )
+                ), signal
+            )
+        ), signal
     )
-);
+), []);
 ```
 
 ## Contribute
 
 To leave a comment please use the
 [krassnig.dev repository issue](https://github.com/Krassnig/krassnig.dev/issues/1).
-If you like this library I would really appreciate a github star in the
+If you like this library, I would really appreciate a github star in the
 [no-async-hook repository](https://github.com/Krassnig/no-async-hook).
 
 Thanks for reading ^^
