@@ -209,3 +209,25 @@ pre > code span {
 	font-family: inherit;
 	white-space: pre;
 }
+
+ol {
+	padding-left: 40px;
+	display: flex;
+	flex-direction: column;
+
+	list-style: initial;
+	color: orange;
+}
+
+ol li {
+	padding: 10px;
+	list-style: circle;
+}
+
+video {
+	display: flex;
+	flex: 1 1 auto;
+	width: 100%;
+	min-width: 0;
+	height: fit-content;
+}

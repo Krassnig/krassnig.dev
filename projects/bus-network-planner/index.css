@@ -1,0 +1,42 @@
+article {
+	max-width: 1000px;
+}
+
+.developer-list {
+	all: unset;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	flex: 1 1 auto;
+	list-style: none;
+	margin-top: 20px;
+}
+
+.developer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	align-items: center;
+	flex: 0 0 auto;
+	padding: 10px;
+
+	color: white;
+	text-decoration: underline;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 1rem;
+}
+
+.profile-picture {
+	display: flex;
+	align-items: center;
+	text-align: center;
+	
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+
+	overflow: hidden;
+	margin: 5px;
+}

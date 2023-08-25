@@ -6,7 +6,7 @@ It is designed for people who are just starting to learn programming, enabling t
 The source code, documentation and additional examples can be found in the [CodeDraw Repository](https://github.com/Krassnig/CodeDraw).
 
 If you are interested in the detailed designed decision that shaped this library, consider reading my bachelor thesis on
-[CodeDraw: A Graphics Library for Novice Programmers](./assets/CodeDraw%20Thesis.pdf).
+[CodeDraw: A Graphics Library for Novice Programmers](./CodeDraw%20Thesis.pdf).
 
 The following two programs are implemented using CodeDraw and porovide examples of how this library can be used.
 

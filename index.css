@@ -109,7 +109,7 @@ main {
 }
 
 main > div {
-	display: flex;
+	display: block;
 	flex-direction: column;
 	padding: 100px 25px;
 	margin: 100px 20px;
@@ -118,6 +118,15 @@ main > div {
 	max-width: 800px;
 
 	color: #BBBBBB;
+	font-size: 1.25rem;
+	font-family: merriweather, georgia, serif;
+}
+
+main > div a {
+	display: inline;
+
+	color: white;
+	text-decoration: underline;
 	font-size: 1.25rem;
 	font-family: merriweather, georgia, serif;
 }
