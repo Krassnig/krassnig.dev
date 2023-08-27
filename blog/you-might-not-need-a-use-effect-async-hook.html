@@ -31,8 +31,8 @@ the dependency array can no longer be statically verified by ESLint.</p>
 <a href="https://github.com/Krassnig/no-async-hook">Github repository</a> and
 <a href="https://www.npmjs.com/package/no-async-hook">NPM package</a>.</p>
 <h2 id="async">Async</h2>
-<p>The <code>Async</code> function enables you to write a typical async functions.
-That function is passed to <code>Async</code> and then transformed into a function that can be used by <code>useEffect</code>.</p>
+<p><code>Async</code> enables you to write a typical async functions inside <code>useEffect</code>.
+Your async function is passed to <code>Async</code> and then transformed into a function that can be utilized by <code>useEffect</code>.</p>
 <pre><code class="lang-tsx"><span class="hljs-keyword">import</span> { Async } <span class="hljs-keyword">from</span> <span class="hljs-string">"no-async-hook"</span>;
 <span class="hljs-keyword">import</span> { useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">"react"</span>;
 
@@ -53,7 +53,7 @@ That function is passed to <code>Async</code> and then transformed into a functi
     );
 }
 </code></pre>
-<p>Wihtin the async function, you can perform any async operations as you normally would.
+<p>Wihtin the async function, you can perform any async operations as you would normally.
 And since <code>Async</code> is essentially just another function called inside <code>useEffect</code>,
 ESLint verifies missing dependencies the same as it would for any other function inside <code>useEffect</code>.
 For example, if the <code>personId</code> were to be forgotten in the <code>useEffect</code> dependency array,
@@ -288,13 +288,13 @@ In this section it is suggested, that a boolean value can be used to track wheth
 </code></pre>
 <p>However, using this approach has a few downsides.
 The <code>ignore</code> variable can only be used inside the <code>useEffect</code> lambda.
-Should you attempt to it onto <code>fetchResults</code>, its value would remain unaffected inside <code>fetchResults</code>.
-Also, as this solution does not utilize <code>AbortSignal</code>s, request have to completion, wasting resources in the process.
+Should you attempt to pass the <code>ignore</code> variable onto <code>fetchResults</code>, its value would remain unaffected inside <code>fetchResults</code>.
+Also, as this solution does not utilize <code>AbortSignal</code>s, request have to run to completion, wasting resources in the process.
 Lastly, as the complexity of the effect grows, it becomes harder to implement correctly and consequently also harder to read.</p>
 <p><a href="https://github.com/TodePond/C/blob/v0.9.9.9.9.9.9.9.9d/wallpaper_dont_upload.png">Still love you Dan ;)</a></p>
 <h2 id="effect">Effect</h2>
 <p>The inverse function of <code>Async</code> is <code>Effect</code> and is used to convert a callback style functions into promises.
-It has almost the exact same syntax as <code>useEffect</code>. Consequently, implementing an <code>Effect</code> should not need an explanation.</p>
+It has almost the exact same signature as <code>useEffect</code>. Consequently, implementing an <code>Effect</code> should not need an explanation.</p>
 <pre><code class="lang-typescript">useEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> Async(<span class="hljs-keyword">async</span> signal =&gt; {
     <span class="hljs-keyword">await</span> Effect&lt;<span class="hljs-keyword">void</span>&gt;(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> {
         <span class="hljs-keyword">const</span> timeoutId = setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> resolve(), <span class="hljs-number">1000</span>);
@@ -303,7 +303,7 @@ It has almost the exact same syntax as <code>useEffect</code>. Consequently, imp
     <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> endpoint.findById(..., signal);
 }), [...]);
 </code></pre>
-<p>The main differences between <code>useEffect</code> and <code>Effect</code> are that instead of passing a dependency array it accepts an <code>AbortSignal</code> and <code>Effect</code> provides a <code>resolve</code> function to fulfill the returned promise.
+<p>The main differences between <code>useEffect</code> and <code>Effect</code> are that instead of passing a dependency array it accepts an <code>AbortSignal</code> and it provides a <code>resolve</code> function to fulfill the returned promise.
 Additionally, you can improve the readability of your code by wrapping <code>Effect</code> calls within async functions.</p>
 <pre><code class="lang-typescript"><span class="hljs-keyword">const</span> delay = (<span class="hljs-attribute">milliseconds</span>: number, <span class="hljs-keyword">signal</span><span class="hljs-string"></span>: AbortSignal): Promise&lt;<span class="hljs-keyword">void</span>&gt; =&gt; {
     <span class="hljs-keyword">return</span> Effect&lt;<span class="hljs-keyword">void</span>&gt;(resolve =&gt; {
@@ -358,7 +358,7 @@ You can achieve that by simply resolving the <code>Effect</code> inside its clea
 </code></pre>
 <h2 id="why-the-uppercase-naming-">Why The Uppercase Naming?</h2>
 <p>Honestly, I am not too sure myself.
-I am well aware that I am deviating Javascript&#39;s convention, but it just kind of has a nice aestethic.</p>
+I am well aware that I am deviating from Javascript&#39;s convention, but it just kind of has a nice aestethic.</p>
 <p>If I were to make up a justification:
 In React, hooks are usually named <code>use</code> followed by a noun.
 Now, what if we to strip away the aspect that makes it a hook?
@@ -388,7 +388,7 @@ feel free to express that uncertainty by switching between both styles multiple 
 <h2 id="contribute">Contribute</h2>
 <p>To leave a comment please use the
 <a href="https://github.com/Krassnig/krassnig.dev/issues/1">krassnig.dev repository issue</a>.
-If you like this library, I would really appreciate a github star in the
+If you like this library, I would really appreciate a Github star in the
 <a href="https://github.com/Krassnig/no-async-hook">no-async-hook repository</a>.</p>
 <p>Thanks for reading ^^</p>
 

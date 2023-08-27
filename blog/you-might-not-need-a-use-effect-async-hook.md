@@ -13,8 +13,8 @@ The source code for the code used in this article can be found in this
 
 ## Async
 
-The `Async` function enables you to write a typical async functions.
-That function is passed to `Async` and then transformed into a function that can be used by `useEffect`.
+`Async` enables you to write a typical async functions inside `useEffect`.
+Your async function is passed to `Async` and then transformed into a function that can be utilized by `useEffect`.
 
 ```tsx
 import { Async } from "no-async-hook";
@@ -38,7 +38,7 @@ const PersonComponent: React.FC = ({ personId }) => {
 }
 ```
 
-Wihtin the async function, you can perform any async operations as you normally would.
+Wihtin the async function, you can perform any async operations as you would normally.
 And since `Async` is essentially just another function called inside `useEffect`,
 ESLint verifies missing dependencies the same as it would for any other function inside `useEffect`.
 For example, if the `personId` were to be forgotten in the `useEffect` dependency array,
@@ -445,7 +445,7 @@ useEffect(() => Async(
 
 To leave a comment please use the
 [krassnig.dev repository issue](https://github.com/Krassnig/krassnig.dev/issues/1).
-If you like this library, I would really appreciate a github star in the
+If you like this library, I would really appreciate a Github star in the
 [no-async-hook repository](https://github.com/Krassnig/no-async-hook).
 
 Thanks for reading ^^
