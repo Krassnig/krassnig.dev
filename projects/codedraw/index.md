@@ -8,7 +8,7 @@ The source code, documentation and additional examples can be found in the [Code
 If you are interested in the detailed designed decision that shaped this library, consider reading my bachelor thesis on
 [CodeDraw: A Graphics Library for Novice Programmers](./CodeDraw%20Thesis.pdf).
 
-The following two programs are implemented using CodeDraw and porovide examples of how this library can be used.
+The following two programs are implemented using CodeDraw and provide examples of how this library can be used.
 
 ## Particle Gravity
 
