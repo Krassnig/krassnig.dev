@@ -75,7 +75,7 @@ However, in the `PersonForm`, we might have a more complex object like `Person`.
 This is precisely where the utility `useDestructuring` becomes apparent.
 It automatically generates all the necessary `ReactSetState` functions,
 enabling you to keep the `TextInput` component decoupled from the more complex `PersonForm` component.
-The only way these two components remain coupled is through their shared state which follows Reacts convention for two way binding given by useState.
+The only way these two components remain coupled is through their shared state which follows Reacts convention for two way binding given by `useState`.
 
 ```tsx
 import { useState } from "react";
