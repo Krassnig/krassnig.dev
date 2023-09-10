@@ -1,4 +1,8 @@
-# Use Destructuring To Handle Forms In React!
+# So You Want Two-Way Binding In React?
+
+There is a good reason React prefers one-way binding.
+https://www.reddit.com/r/javascript/comments/v993r4/askjs_why_is_oneway_binding_better_than_twoway/
+https://www.quora.com/Why-doesn-t-React-have-2-way-data-binding-like-Angular
 
 There have been numerous attempts at handling forms in React such as
 [Formik](https://formik.org/),

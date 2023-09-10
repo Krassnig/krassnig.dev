@@ -3,7 +3,7 @@
 There are numerous attempts at handling async programming in React.
 Many of those attempts introduce a new hook named something along the lines of `useAsync`.
 However, creating a custom hook with dependencies come with a significant drawback:
-the dependency array can no longer be statically verified by ESLint.
+the dependency array is no longer be statically verified by ESLint.
 
 This article describes how to overcome that problem and demonstrate how straightforward using async programming can be in React.
 
@@ -204,7 +204,7 @@ the for loop that updates the seconds.
 ### How To Implement Abortable Promises
 
 Inside promises we need to use the `AbortSignal` to effectively abort promises.
-When `controller.abort(reason: any)` is called the associated `controller.signal` is aborted
+When `controller.abort(reason: any)` is called the associated `controller.signal` is aborted.
 Ideally, the `reason` should be thrown from the inside async function.
 
 ```typescript
@@ -272,7 +272,7 @@ Rather, they should be rethrown until they reach the initial caller of the async
 
 Unfortunately, both `fetch` and `axios` throw custom errors when HTTP requests are cancelled.
 However, targeting a specific error reduces the overall generality of your async functions.
-Thankfully, there is a work around even when you have no controll over the error thrown by the callee and the error provided by the caller.
+Thankfully, there is a work around even when you neither have controll over the error thrown by the callee nor the error provided by the caller.
 
 Within each `catch` block, check whether the signal has already been aborted.
 Through this approach you can infer that the error is *almost* centrainly a cancellation error.
@@ -321,10 +321,10 @@ useEffect(() => {
 However, using this approach has a few downsides.
 The `ignore` variable can only be used inside the `useEffect` lambda.
 Should you attempt to pass the `ignore` variable onto `fetchResults`, its value would remain unaffected inside `fetchResults`.
-Also, as this solution does not utilize `AbortSignal`s, request have to run to completion, wasting resources in the process.
+Also, the solution provided wastes resources since each request has to run to completion.
 Lastly, as the complexity of the effect grows, it becomes harder to implement correctly and consequently also harder to read.
 
-[Still love you Dan ;)](https://github.com/TodePond/C/blob/v0.9.9.9.9.9.9.9.9d/wallpaper_dont_upload.png)
+[Still love you Dan ;)](https://github.com/TodePond/WhenWillProgrammersStopMakingDecisionsForOurSocietyAndJustLeaveUsAloneAlsoHackerNewsIsAVileWebsite/blob/main/wallpaper_dont_upload.png)
 
 ## Effect
 
@@ -392,7 +392,7 @@ const xhrGet = (url: string, signal: AbortSignal): Promise<string> => {
 
 ### Awaiting Cleanup
 
-`Effect` can even be used to execute code once the `useEffect` cleaned up has been triggered.
+`Effect` can even be used to execute code once the `useEffect` clean up has been triggered.
 You can achieve that by simply resolving the `Effect` inside its cleanup function.
 
 ```typescript
@@ -407,10 +407,11 @@ useEffect(() => Async(async signal => {
 
 ## Why The Uppercase Naming?
 
-Honestly, I am not too sure myself.
-I am well aware that I am deviating from Javascript's convention, but it just kind of has a nice aestethic.
+Well, I can't use `async` since it is a keyword already and I just can't think of another name.
+I am well aware that I am deviating from Javascript's convention, but by now I have gotten used to it.
+I even think it kind of has a nice aestethic, terrible right?
 
-If I were to make up a justification:
+If I were to make up a better justification:
 In React, hooks are usually named `use` followed by a noun.
 Now, what if we to strip away the aspect that makes it a hook?
 You would end up with just a noun in uppercase.
