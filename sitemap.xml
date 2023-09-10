@@ -1,26 +1,34 @@
 <urlset>
 	<url>
 		<loc>https://krassnig.dev/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/blog/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/blog/use-destructuring-to-handle-forms-in-react.html</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/blog/you-might-not-need-a-use-effect-async-hook.html</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/projects/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/projects/codedraw/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/projects/einf%C3%BChrung-in-das-japanische-anki-deck/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 	<url>
 		<loc>https://krassnig.dev/projects/bus-network-planner/</loc>
+		<lastmod>2023-09-04T17:05:44+00:00</lastmod>
 	</url>
 </urlset>
